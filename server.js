@@ -4043,7 +4043,7 @@ function nexusRequest(data, match, sendBadge, request, urlCallback, dataCallback
 }
 
 function isSnapshotVersion(version) {
-  var pattern = /(\d+\.)+\d\-SNAPSHOT/;
+  var pattern = /(\d+\.)*\d\-SNAPSHOT/;
   return version.match(pattern);
 }
 
