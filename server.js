@@ -3713,10 +3713,13 @@ cache(function(data, match, sendBadge, request) {
 }));
 
 function jenkinsRequest(data, match, sendBadge, request, badgeName, urlSuffix, dataCallback, badgeCallback) {
-  var scheme = match[2];  // http(s)
-  var host = match[4];  // jenkins.qa.ubuntu.com
-  var job = match[5];  // precise-desktop-amd64_default
-  var format = match[6];
+  var scheme = match[1];  // http(s)
+  var host = match[2];  // jenkins.qa.ubuntu.com
+  var job = match[3];  // precise-desktop-amd64_default
+  var format = match[4];
+
+  job = job.split('/').join('/job/');
+
   var options = {
      json: true,
      uri: scheme + '://' + host + '/job/' + job + urlSuffix
@@ -3755,7 +3758,7 @@ function jenkinsRequest(data, match, sendBadge, request, badgeName, urlSuffix, d
 }
 
 // Jenkins build status integration
-camp.route(/^\/jenkins(-ci)?\/s\/(http(s)?)\/((?:[^\/]+)(?:\/.+?)?)\/([^\/]+)\.(svg|png|gif|jpg|json)$/,
+camp.route(/^\/jenkins(?:-ci)?\/s\/(http(?:s)?)\/([^\/]+)\/(.+)\.(svg|png|gif|jpg|json)$/,
 cache(function(data, match, sendBadge, request) {
   var urlSuffix = '/api/json?tree=color';
   jenkinsRequest(data, match, sendBadge, request, 'build', urlSuffix, function(json) {
@@ -3782,7 +3785,7 @@ cache(function(data, match, sendBadge, request) {
 }));
 
 // Jenkins tests integration
-camp.route(/^\/jenkins(-ci)?\/t\/(http(s)?)\/((?:[^\/]+)(?:\/.+?)?)\/([^\/]+)\.(svg|png|gif|jpg|json)$/,
+camp.route(/^\/jenkins(?:-ci)?\/t\/(http(?:s)?)\/([^\/]+)\/(.+)\.(svg|png|gif|jpg|json)$/,
 cache(function(data, match, sendBadge, request) {
   var urlSuffix = '/lastBuild/api/json?tree=actions[failCount,skipCount,totalCount]';
   jenkinsRequest(data, match, sendBadge, request, 'tests', urlSuffix, function(json) {
@@ -3804,7 +3807,7 @@ cache(function(data, match, sendBadge, request) {
 }));
 
 // Jenkins cobertura coverage integration
-camp.route(/^\/jenkins(-ci)?\/c\/(http(s)?)\/((?:[^\/]+)(?:\/.+?)?)\/([^\/]+)\.(svg|png|gif|jpg|json)$/,
+camp.route(/^\/jenkins(?:-ci)?\/c\/(http(?:s)?)\/([^\/]+)\/(.+)\.(svg|png|gif|jpg|json)$/,
 cache(function(data, match, sendBadge, request) {
   var urlSuffix = '/lastBuild/cobertura/api/json?tree=results[elements[name,denominator,numerator,ratio]]';
   jenkinsRequest(data, match, sendBadge, request, 'coverage', urlSuffix, function(json) {
@@ -3824,7 +3827,7 @@ cache(function(data, match, sendBadge, request) {
 }));
 
 //Jenkins jacoco coverage integration
-camp.route(/^\/jenkins(-ci)?\/j\/(http(s)?)\/((?:[^\/]+)(?:\/.+?)?)\/([^\/]+)\.(svg|png|gif|jpg|json)$/,
+camp.route(/^\/jenkins(?:-ci)?\/j\/(http(?:s)?)\/([^\/]+)\/(.+)\.(svg|png|gif|jpg|json)$/,
 cache(function(data, match, sendBadge, request) {
   var urlSuffix = '/lastBuild/jacoco/api/json';
   jenkinsRequest(data, match, sendBadge, request, 'coverage', urlSuffix, function(json) {
